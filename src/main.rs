@@ -1,58 +1,28 @@
-use serde::{Serialize, Deserialize};
-use tantivy::{schema::*, Index, doc, query::QueryParser, collector::TopDocs, TantivyError};
+mod data_loader;
+mod vector_store;
+mod search_engine;
+mod utils;
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Document {
-    title: String,
-    body: String,
-}
+use clap::{App, Arg};
 
-fn create_index() -> Result<Index, TantivyError> {
-    let mut schema_builder = Schema::builder();
-    schema_builder.add_text_field("title", TEXT | STORED);
-    schema_builder.add_text_field("body", TEXT);
-    let schema = schema_builder.build();
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let matches = App::new("Vector Vortex Search Engine")
+        .version("1.0")
+        .author("tensorrist")
+        .about("Performs a search with the given query")
+        .arg(Arg::new("query")
+             .short('q')
+             .long("query")
+             .value_name("QUERY")
+             .help("The search query to execute")
+             .takes_value(true)
+             .required(true))
+        .get_matches();
 
-    let index = Index::create_in_ram(schema.clone());
+    let query = matches.value_of("query").unwrap();
 
-    let mut index_writer = index.writer(50_000_000)?;
-    let title = schema.get_field("title").unwrap();
-    let body = schema.get_field("body").unwrap();
-    let doc = doc!(title => "Example Title", body => "This is the body of the document.");
-    index_writer.add_document(doc)?;
-    index_writer.commit()?;
-
-    Ok(index)
-}
-
-fn search_index(index: &Index, query_str: &str) -> Result<(), TantivyError> {
-    let reader = index.reader()?;
-    let searcher = reader.searcher();
-
-    let schema = index.schema();
-    let title = schema.get_field("title").unwrap();
-    let body = schema.get_field("body").unwrap();
-    let query_parser = QueryParser::for_index(&index, vec![title, body]);
-
-    let query = query_parser.parse_query(query_str)?;
-    let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
-
-    for (_, doc_address) in top_docs {
-        let retrieved_doc = searcher.doc(doc_address)?;
-        println!("{:?}", retrieved_doc);
-    }
-
-    Ok(())
-}
-
-fn main() -> Result<(), TantivyError> {
-    println!("Hello, Search Engine!");
-
-    // Create the index and store it
-    let index = create_index()?;
-
-    // Search within the created index
-    search_index(&index, "Example")?;
+    let index = search_engine::create_index()?;
+    search_engine::search_index(&index, query)?;
 
     Ok(())
 }
