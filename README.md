@@ -1,4 +1,4 @@
-# vector-vortex
-building a small search engine in rust
-TODO:  add more features and a vectorstore
-to expand its funcionalities. 
+### vector-vortex
+building a search engine vortex in rust
+TODO:  add more features; 
+expand it like there's no tomorrow.  
