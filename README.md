@@ -1,4 +1,5 @@
 # vector-vortex
-building a small search engine in rust
-TODO:  add more features and a vectorstore
-to expand its funcionalities. 
+building a small search engine 
+TODO:  expand its funcionalities 
+for an automated DISPATCHIT system for IT support ticket assignment - designed in Rust
+
