@@ -16,7 +16,7 @@ pub struct VectorStore {
 }
 
 impl VectorStore {
-    /// Creates a new VectorStore with an associated HNSW wrapper.
+    /// VectorStore plus HNSW wrapper.
     pub fn new(hnsw: HnswWrapper) -> Self {
         Self {
             vectors: HashMap::new(),
@@ -38,7 +38,7 @@ impl VectorStore {
     }
 
     /// Searches for the k nearest neighbors to a query vector using the HNSW index.
-    /// This is a fallback method that computes cosine similarity directly in the vector store.
+   
     pub fn search_nearest_neighbors(&self, query: &[f32], k: usize) -> Vec<(String, f32)> {
         let mut neighbors: Vec<(String, f32)> = self.vectors.iter()
             .map(|(id, vec)| (id.clone(), cosine_similarity(query, &vec.values)))

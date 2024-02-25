@@ -1,13 +1,19 @@
 [package]
 name = "vector-vortex"
 version = "0.1.0"
-edition = "2018" # or "2021"
+edition = "2021"
 
 [dependencies]
+reqwest = { version = "0.11", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+tokio = { version = "1", features = ["full"] }
 tantivy = "0.17"
-serde = "1.0"
 serde_json = "1.0"
 clap = "3.1.0"
+ndarray = "0.15"
+hnsw = "0.11.0"
+fastembed = "2.1.1"
+actix-web = "4.0.0"
 
 
 
